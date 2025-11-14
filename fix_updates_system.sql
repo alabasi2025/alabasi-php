@@ -171,8 +171,8 @@ COMMENT='إشعارات التحديثات للمستخدمين';
 CREATE OR REPLACE VIEW v_latest_rollbackable_update AS
 SELECT 
     u.*,
-    applier.name AS appliedByName,
-    rollbacker.name AS rolledBackByName
+    COALESCE(applier.fullName, applier.username) AS appliedByName,
+    COALESCE(rollbacker.fullName, rollbacker.username) AS rolledBackByName
 FROM system_updates u
 LEFT JOIN users applier ON u.appliedBy = applier.id
 LEFT JOIN users rollbacker ON u.rolledBackBy = rollbacker.id
