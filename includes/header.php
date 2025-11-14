@@ -89,6 +89,16 @@
                 <span class="text">المستخدمين</span>
             </a>
             
+            <a href="accounting-cycles.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'accounting-cycles.php' ? 'active' : ''; ?>">
+                <span class="icon">📅</span>
+                <span class="text">الدورات المحاسبية</span>
+            </a>
+            
+            <a href="backup-manager.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'backup-manager.php' ? 'active' : ''; ?>">
+                <span class="icon">💾</span>
+                <span class="text">النسخ الاحتياطي</span>
+            </a>
+            
             <a href="settings.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
                 <span class="icon">⚙️</span>
                 <span class="text">الإعدادات</span>
