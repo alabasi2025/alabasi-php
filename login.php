@@ -1,8 +1,7 @@
 <?php
 /**
- * صفحة تسجيل الدخول - دخول مباشر بدون كلمة سر
- * Login Page - Direct Login Without Password
- * Version: 2.0 - Fixed for root user
+ * صفحة تسجيل الدخول - دخول مباشر كمستخدم root
+ * Login Page - Direct Login as Root User
  */
 
 session_start();
@@ -16,29 +15,41 @@ if (isLoggedIn()) {
     exit;
 }
 
-// تسجيل دخول تلقائي
+// تسجيل دخول تلقائي كمستخدم root
 try {
-    // جلب أول مستخدم admin
-    $stmt = $pdo->query("SELECT * FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
+    // البحث عن مستخدم root أو إنشاؤه
+    $stmt = $pdo->query("SELECT * FROM users WHERE email = 'root' OR username = 'root' LIMIT 1");
     $user = $stmt->fetch();
     
-    if ($user) {
-        // تسجيل الدخول تلقائياً
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['email'] ?? 'admin';
-        $_SESSION['user_name'] = $user['name'] ?? 'admin';
-        $_SESSION['user_role'] = $user['role'];
+    if (!$user) {
+        // إنشاء مستخدم root إذا لم يكن موجوداً
+        $insertStmt = $pdo->prepare("INSERT INTO users (username, email, name, role, password, createdAt, lastSignedIn) VALUES (?, ?, ?, ?, '', NOW(), NOW())");
+        $insertStmt->execute(['root', 'root', 'Root User', 'admin']);
         
-        // تحديث آخر تسجيل دخول
-        $updateStmt = $pdo->prepare("UPDATE users SET lastSignedIn = NOW() WHERE id = ?");
-        $updateStmt->execute([$user['id']]);
-        
-        // الذهاب إلى لوحة التحكم
-        header("Location: dashboard.php");
-        exit;
-    } else {
-        $error = "لا يوجد مستخدمين نشطين في النظام";
+        // جلب المستخدم المُنشأ
+        $user = [
+            'id' => $pdo->lastInsertId(),
+            'username' => 'root',
+            'email' => 'root',
+            'name' => 'Root User',
+            'role' => 'admin'
+        ];
     }
+    
+    // تسجيل الدخول تلقائياً
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['username'] = $user['email'] ?? $user['username'] ?? 'root';
+    $_SESSION['user_name'] = $user['name'] ?? 'Root User';
+    $_SESSION['user_role'] = $user['role'] ?? 'admin';
+    
+    // تحديث آخر تسجيل دخول
+    $updateStmt = $pdo->prepare("UPDATE users SET lastSignedIn = NOW() WHERE id = ?");
+    $updateStmt->execute([$user['id']]);
+    
+    // الذهاب إلى لوحة التحكم
+    header("Location: dashboard.php");
+    exit;
+    
 } catch (PDOException $e) {
     $error = "خطأ في الاتصال بقاعدة البيانات: " . $e->getMessage();
 }
@@ -51,30 +62,89 @@ try {
     <title>تسجيل الدخول - نظام الأباسي الموحد</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+        .login-box {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .login-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .login-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
         .auto-login-message {
             text-align: center;
-            padding: 40px;
+            padding: 50px 30px;
         }
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            margin: 0 auto 30px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .auto-login-message h3 {
+            color: #333;
+            font-size: 20px;
+            margin: 0 0 10px 0;
+        }
+        .auto-login-message p {
+            color: #666;
+            margin: 0;
+        }
         .error-box {
             background: #fee;
             border: 2px solid #c33;
             color: #c33;
-            padding: 20px;
+            padding: 30px;
+            margin: 30px;
             border-radius: 8px;
-            margin: 20px 0;
+            text-align: center;
+        }
+        .error-box h3 {
+            margin: 0 0 10px 0;
+        }
+        .user-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -89,8 +159,9 @@ try {
             <?php if (!isset($error)): ?>
             <div class="auto-login-message">
                 <div class="spinner"></div>
-                <h3>جاري تسجيل الدخول تلقائياً...</h3>
-                <p style="color: #666; margin-top: 10px;">يرجى الانتظار...</p>
+                <h3>جاري تسجيل الدخول...</h3>
+                <p>تسجيل الدخول كمستخدم</p>
+                <span class="user-badge">👤 root</span>
             </div>
             <?php else: ?>
             <div class="error-box">
@@ -104,10 +175,10 @@ try {
     <script>
         // إعادة تحميل الصفحة بعد ثانية واحدة إذا لم يتم التوجيه
         setTimeout(function() {
-            if (!<?php echo isset($error) ? 'true' : 'false'; ?>) {
-                window.location.href = 'dashboard.php';
-            }
-        }, 1000);
+            <?php if (!isset($error)): ?>
+            window.location.href = 'dashboard.php';
+            <?php endif; ?>
+        }, 1500);
     </script>
 </body>
 </html>
