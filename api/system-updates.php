@@ -108,13 +108,22 @@ function checkGitHubUpdates($pdo, $input, $userId) {
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Accept: application/vnd.github.v3+json'
     ]);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
     curl_close($ch);
     
+    if ($curlError) {
+        throw new Exception('خطأ في الاتصال: ' . $curlError);
+    }
+    
     if ($httpCode !== 200) {
-        throw new Exception('فشل الاتصال بـ GitHub. الرجاء التحقق من الرابط.');
+        throw new Exception('فشل الاتصال بـ GitHub (' . $httpCode . '). الرجاء التحقق من الرابط.');
     }
     
     $commits = json_decode($response, true);
