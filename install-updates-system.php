@@ -155,7 +155,10 @@ require_once 'includes/db.php';
             
             try {
                 // قراءة ملف SQL
-                $sqlFile = __DIR__ . '/fix_updates_system.sql';
+                $sqlFile = __DIR__ . '/install_updates_simple.sql';
+                if (!file_exists($sqlFile)) {
+                    $sqlFile = __DIR__ . '/fix_updates_system.sql';
+                }
                 if (!file_exists($sqlFile)) {
                     throw new Exception('ملف fix_updates_system.sql غير موجود!');
                 }
