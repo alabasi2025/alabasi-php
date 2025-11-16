@@ -1,36 +1,221 @@
-# ملفات الإعدادات الحساسة
-.env
-includes/db.php
+# ===================================
+# نظام الأباسي المحاسبي - .gitignore
+# Al-Abasi Accounting System
+# ===================================
 
-# مجلدات الرفع والنسخ الاحتياطي
+# ===================================
+# ملفات قاعدة البيانات
+# Database Files
+# ===================================
+*.sql
+*.sql.gz
+*.sql.zip
+*.db
+*.sqlite
+*.sqlite3
+backups/*.sql
+
+# ===================================
+# ملفات التكوين الحساسة
+# Sensitive Configuration Files
+# ===================================
+.env
+.env.local
+.env.production
+config/db.php
+config/database.php
+
+# ===================================
+# ملفات الرفع والمستخدمين
+# Uploads & User Files
+# ===================================
 uploads/*
 !uploads/.gitkeep
-backups/*
-!backups/.gitkeep
+!uploads/README.md
+files/*
+!files/.gitkeep
+temp/*
+tmp/*
 
-# ملفات النظام
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# ملفات IDE
-.vscode/
-.idea/
-*.sublime-*
-
-# ملفات مؤقتة
+# ===================================
+# ملفات السجلات
+# Log Files
+# ===================================
 *.log
-*.tmp
+logs/*
+!logs/.gitkeep
+error_log
+debug.log
+
+# ===================================
+# ملفات الكاش
+# Cache Files
+# ===================================
+cache/*
+!cache/.gitkeep
 *.cache
+.cache/
+
+# ===================================
+# ملفات الجلسات
+# Session Files
+# ===================================
+sessions/*
+!sessions/.gitkeep
+
+# ===================================
+# ملفات النسخ الاحتياطي
+# Backup Files
+# ===================================
+*.bak
+*.backup
+*.old
+*~
+.DS_Store
+
+# ===================================
+# ملفات IDE و Editors
+# IDE & Editor Files
+# ===================================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# PhpStorm / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# NetBeans
+nbproject/
+nbbuild/
+dist/
+nbdist/
+
+# Eclipse
+.project
+.buildpath
+.settings/
+
+# Vim
 *.swp
+*.swo
 *~
 
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ===================================
+# ملفات نظام التشغيل
+# OS Files
+# ===================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+
+# ===================================
 # ملفات Composer
+# Composer Files
+# ===================================
 /vendor/
 composer.lock
+composer.phar
 
-# ملفات Node
+# ===================================
+# ملفات Node.js
+# Node.js Files
+# ===================================
 node_modules/
+npm-debug.log
+yarn-error.log
 package-lock.json
 yarn.lock
 
+# ===================================
+# ملفات البناء والتوزيع
+# Build & Distribution Files
+# ===================================
+/dist/
+/build/
+*.min.js
+*.min.css
+
+# ===================================
+# ملفات الاختبار
+# Testing Files
+# ===================================
+/tests/coverage/
+phpunit.xml
+.phpunit.result.cache
+
+# ===================================
+# ملفات مؤقتة
+# Temporary Files
+# ===================================
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# ===================================
+# ملفات Git
+# Git Files
+# ===================================
+.git/
+.gitattributes
+
+# ===================================
+# ملفات خاصة بالمشروع
+# Project-Specific Files
+# ===================================
+
+# ملفات التطوير المحلي
+local_config.php
+dev_config.php
+
+# ملفات الإنتاج
+production_config.php
+
+# مفاتيح API
+api_keys.php
+secrets.php
+
+# ===================================
+# استثناءات مهمة
+# Important Exceptions
+# ===================================
+
+# احتفظ بملفات .gitkeep
+!.gitkeep
+
+# احتفظ بملفات README
+!README.md
+!*/README.md
+
+# احتفظ بملفات .htaccess
+!.htaccess
+!*/.htaccess
+
+# احتفظ بملفات index.php الفارغة للحماية
+!index.php
+!*/index.php
