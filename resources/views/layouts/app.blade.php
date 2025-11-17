@@ -47,6 +47,14 @@
         .sidebar-right .nav-dropdown .sub-item:hover {
             background-color: #243447;
         }
+        .sidebar-right .nav-dropdown .sub-sub-item {
+            padding-right: 60px;
+            background-color: #0f1419;
+            font-size: 0.85em;
+        }
+        .sidebar-right .nav-dropdown .sub-sub-item:hover {
+            background-color: #1a1f26;
+        }
         
         /* القائمة اليسرى */
         .sidebar-left {
@@ -160,12 +168,31 @@
                 </div>
             </div>
             
-            <a href="{{ route('accounts.index') }}"><i class="bi bi-list-ul"></i> دليل الحسابات</a>
-            <a href="{{ route('account-types.index') }}"><i class="bi bi-tags"></i> أنواع الحسابات</a>
-            <a href="{{ route('analytical-account-types.index') }}"><i class="bi bi-layers"></i> أنواع الحسابات التحليلية</a>
-            <a href="{{ route('journal-entries.index') }}"><i class="bi bi-journal-text"></i> القيود اليومية</a>
-            <a href="#"><i class="bi bi-receipt"></i> السندات</a>
-            <a href="{{ route('analytical-accounts.index') }}"><i class="bi bi-people"></i> الحسابات التحليلية</a>
+            <!-- نظام الحسابات -->
+            <div class="nav-dropdown">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#accountingSystem">
+                    <i class="bi bi-calculator-fill"></i> نظام الحسابات
+                    <i class="bi bi-chevron-down float-start"></i>
+                </a>
+                <div class="collapse" id="accountingSystem">
+                    <!-- إعدادات النظام المحاسبي -->
+                    <div class="nav-dropdown">
+                        <a href="#" class="sub-item dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#accountingSettings">
+                            <i class="bi bi-gear"></i> إعدادات النظام المحاسبي
+                            <i class="bi bi-chevron-down float-start"></i>
+                        </a>
+                        <div class="collapse" id="accountingSettings">
+                            <a href="{{ route('accounts.index') }}" class="sub-sub-item"><i class="bi bi-list-ul"></i> الدليل المحاسبي</a>
+                            <a href="{{ route('account-types.index') }}" class="sub-sub-item"><i class="bi bi-tags"></i> أنواع الحسابات</a>
+                            <a href="{{ route('analytical-account-types.index') }}" class="sub-sub-item"><i class="bi bi-layers"></i> أنواع الحسابات التحليلية</a>
+                            <a href="{{ route('analytical-accounts.index') }}" class="sub-sub-item"><i class="bi bi-people"></i> الحسابات التحليلية</a>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ route('journal-entries.index') }}" class="sub-item"><i class="bi bi-journal-text"></i> القيود</a>
+                    <a href="#" class="sub-item"><i class="bi bi-receipt"></i> السندات</a>
+                </div>
+            </div>
             <a href="#"><i class="bi bi-file-earmark-text"></i> التقارير</a>
             <a href="#"><i class="bi bi-gear"></i> الإعدادات</a>
             <a href="{{ route('guide.index') }}"><i class="bi bi-book"></i> الدليل</a>
