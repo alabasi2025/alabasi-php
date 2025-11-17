@@ -15,8 +15,30 @@
                 </div>
 
                 <div class="card-body">
+                    {{-- Company Selection --}}
+                    <div class="alert alert-info mb-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <strong><i class="fas fa-building"></i> المؤسسة:</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <select name="company_id" class="form-control" onchange="this.form.submit()" form="filter-form">
+                                    @foreach($companies as $comp)
+                                        <option value="{{ $comp->id }}" {{ $company->id == $comp->id ? 'selected' : '' }}>
+                                            {{ $comp->company_name }} ({{ $comp->company_code }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <span class="badge badge-primary">الوحدة: {{ $company->unit->unit_name ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
                     {{-- Filters --}}
-                    <form method="GET" action="{{ route('accounts.index') }}" class="mb-4">
+                    <form method="GET" action="{{ route('accounts.index') }}" class="mb-4" id="filter-form">
+                        <input type="hidden" name="company_id" value="{{ $company->id }}">
                         <div class="row">
                             <div class="col-md-3">
                                 <input type="text" name="search" class="form-control" placeholder="بحث بالرمز أو الاسم..." value="{{ request('search') }}">

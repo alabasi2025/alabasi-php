@@ -15,11 +15,30 @@ class AccountController extends Controller
      */
     public function index(Request $request)
     {
-        $company = Company::first();
+        // Get selected company from request or session
+        $companyId = $request->get('company_id', session('selected_company_id'));
+        
+        // Get all companies for selection
+        $companies = Company::where('is_active', true)->orderBy('company_name')->get();
+        
+        if ($companies->isEmpty()) {
+            return redirect()->route('companies.index')
+                ->with('error', 'يجب إنشاء مؤسسة أولاً قبل إدارة دليل الحسابات');
+        }
+        
+        // If no company selected, use first company
+        if (!$companyId) {
+            $companyId = $companies->first()->id;
+        }
+        
+        // Save selected company in session
+        session(['selected_company_id' => $companyId]);
+        
+        $company = Company::find($companyId);
         
         if (!$company) {
             return redirect()->route('companies.index')
-                ->with('error', 'يجب إنشاء مؤسسة أولاً قبل إدارة دليل الحسابات');
+                ->with('error', 'المؤسسة المحددة غير موجودة');
         }
 
         // Get filters
@@ -68,7 +87,7 @@ class AccountController extends Controller
             ->orderBy('code')
             ->get();
 
-        return view('accounts.index', compact('accounts', 'company', 'accountTypes', 'analyticalAccountTypes'));
+        return view('accounts.index', compact('accounts', 'company', 'companies', 'accountTypes', 'analyticalAccountTypes'));
     }
 
     /**
