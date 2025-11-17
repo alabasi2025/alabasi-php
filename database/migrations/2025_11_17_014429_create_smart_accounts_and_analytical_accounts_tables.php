@@ -63,7 +63,7 @@ return new class extends Migration
             
             // إضافة الوصف
             if (!Schema::hasColumn('accounts', 'description')) {
-                $table->text('description')->nullable()->after('is_final');
+                $table->text('description')->nullable()->after('is_main');
             }
             
             // إضافة ملاحظات
