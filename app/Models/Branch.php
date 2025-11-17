@@ -10,6 +10,7 @@ class Branch extends Model
     use HasFactory;
 
     protected $fillable = [
+        'unit_id',
         'branch_code',
         'branch_name',
         'address',
@@ -22,6 +23,22 @@ class Branch extends Model
     protected $casts = [
         'is_active' => 'boolean'
     ];
+
+    /**
+     * علاقة الفرع مع الوحدة
+     */
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * علاقة الفرع مع المؤسسة (عبر الوحدة)
+     */
+    public function company()
+    {
+        return $this->hasOneThrough(Company::class, Unit::class, 'id', 'id', 'unit_id', 'company_id');
+    }
 
     public function accounts()
     {
