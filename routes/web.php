@@ -8,6 +8,7 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\GuideController;
+use App\Http\Controllers\AccountTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,9 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // دليل الحسابات
 Route::resource('accounts', AccountController::class);
+
+// أنواع الحسابات
+Route::resource('account-types', AccountTypeController::class);
 
 // القيود اليومية
 Route::resource('journal-entries', JournalEntryController::class);
