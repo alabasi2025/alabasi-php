@@ -10,7 +10,6 @@ class Unit extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_id',
         'unit_code',
         'unit_name',
         'description',
@@ -26,11 +25,11 @@ class Unit extends Model
     ];
 
     /**
-     * علاقة الوحدة مع المؤسسة
+     * علاقة الوحدة مع المؤسسات (الوحدة تحتوي على مؤسسات متعددة)
      */
-    public function company()
+    public function companies()
     {
-        return $this->belongsTo(Company::class);
+        return $this->hasMany(Company::class);
     }
 
     /**
