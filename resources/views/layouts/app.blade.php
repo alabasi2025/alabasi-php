@@ -36,6 +36,17 @@
         .sidebar-right a:hover { 
             background-color: #34495e; 
         }
+        .sidebar-right .nav-dropdown .dropdown-toggle {
+            position: relative;
+        }
+        .sidebar-right .nav-dropdown .sub-item {
+            padding-right: 40px;
+            background-color: #1a252f;
+            font-size: 0.9em;
+        }
+        .sidebar-right .nav-dropdown .sub-item:hover {
+            background-color: #243447;
+        }
         
         /* القائمة اليسرى */
         .sidebar-left {
@@ -135,7 +146,20 @@
         </div>
         <nav>
             <a href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> لوحة التحكم</a>
-            <a href="{{ route('units.index') }}"><i class="bi bi-building"></i> الوحدات</a>
+            
+            <!-- إدارة النظام -->
+            <div class="nav-dropdown">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#systemManagement">
+                    <i class="bi bi-gear-wide-connected"></i> إدارة النظام
+                    <i class="bi bi-chevron-down float-start"></i>
+                </a>
+                <div class="collapse" id="systemManagement">
+                    <a href="{{ route('units.index') }}" class="sub-item"><i class="bi bi-building"></i> الوحدات</a>
+                    <a href="#" class="sub-item"><i class="bi bi-buildings"></i> المؤسسات</a>
+                    <a href="#" class="sub-item"><i class="bi bi-diagram-3"></i> الفروع</a>
+                </div>
+            </div>
+            
             <a href="{{ route('accounts.index') }}"><i class="bi bi-list-ul"></i> دليل الحسابات</a>
             <a href="{{ route('account-types.index') }}"><i class="bi bi-tags"></i> أنواع الحسابات</a>
             <a href="{{ route('analytical-account-types.index') }}"><i class="bi bi-layers"></i> أنواع الحسابات التحليلية</a>
