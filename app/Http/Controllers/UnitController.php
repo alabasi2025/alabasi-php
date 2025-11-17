@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Unit;
-use App\Models\Company;
 use Illuminate\Http\Request;
 
 class UnitController extends Controller
@@ -13,8 +12,8 @@ class UnitController extends Controller
      */
     public function index()
     {
-        $units = Unit::with('company')
-                    ->withCount('branches')
+        $units = Unit::with('companies')
+                    ->withCount('companies')
                     ->orderBy('unit_name')
                     ->paginate(20);
         
@@ -26,9 +25,7 @@ class UnitController extends Controller
      */
     public function create()
     {
-        $companies = Company::active()->get();
-        
-        return view('units.create', compact('companies'));
+        return view('units.create');
     }
 
     /**
@@ -37,7 +34,6 @@ class UnitController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'company_id' => 'required|exists:companies,id',
             'unit_code' => 'required|string|max:50|unique:units',
             'unit_name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -50,7 +46,7 @@ class UnitController extends Controller
 
         $unit = Unit::create($validated);
 
-        return redirect()->route('units.show', $unit)
+        return redirect()->route('units.index')
                        ->with('success', 'تم إنشاء الوحدة بنجاح');
     }
 
@@ -59,7 +55,7 @@ class UnitController extends Controller
      */
     public function show(Unit $unit)
     {
-        $unit->load(['company', 'branches']);
+        $unit->load(['companies.branches']);
         
         return view('units.show', compact('unit'));
     }
@@ -69,9 +65,7 @@ class UnitController extends Controller
      */
     public function edit(Unit $unit)
     {
-        $companies = Company::active()->get();
-        
-        return view('units.edit', compact('unit', 'companies'));
+        return view('units.edit', compact('unit'));
     }
 
     /**
@@ -80,7 +74,6 @@ class UnitController extends Controller
     public function update(Request $request, Unit $unit)
     {
         $validated = $request->validate([
-            'company_id' => 'required|exists:companies,id',
             'unit_code' => 'required|string|max:50|unique:units,unit_code,' . $unit->id,
             'unit_name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -93,7 +86,7 @@ class UnitController extends Controller
 
         $unit->update($validated);
 
-        return redirect()->route('units.show', $unit)
+        return redirect()->route('units.index')
                        ->with('success', 'تم تحديث الوحدة بنجاح');
     }
 
@@ -102,28 +95,14 @@ class UnitController extends Controller
      */
     public function destroy(Unit $unit)
     {
-        // Check if unit has branches
-        if ($unit->branches()->count() > 0) {
-            return back()->with('error', 'لا يمكن حذف الوحدة لأنها تحتوي على فروع');
+        // Check if unit has companies
+        if ($unit->companies()->count() > 0) {
+            return back()->with('error', 'لا يمكن حذف الوحدة لأنها تحتوي على مؤسسات');
         }
 
         $unit->delete();
 
         return redirect()->route('units.index')
                        ->with('success', 'تم حذف الوحدة بنجاح');
-    }
-    
-    /**
-     * Get units by company (AJAX)
-     */
-    public function getByCompany(Request $request)
-    {
-        $companyId = $request->get('company_id');
-        
-        $units = Unit::where('company_id', $companyId)
-                    ->where('is_active', true)
-                    ->get(['id', 'unit_code', 'unit_name']);
-        
-        return response()->json($units);
     }
 }

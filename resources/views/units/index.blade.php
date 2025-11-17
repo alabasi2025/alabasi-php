@@ -21,10 +21,9 @@
                                 <tr>
                                     <th>الرمز</th>
                                     <th>اسم الوحدة</th>
-                                    <th>المؤسسة</th>
+                                    <th>عدد المؤسسات</th>
                                     <th>المدير</th>
                                     <th>الهاتف</th>
-                                    <th>عدد الفروع</th>
                                     <th>الحالة</th>
                                     <th>الإجراءات</th>
                                 </tr>
@@ -38,12 +37,11 @@
                                             {{ $unit->unit_name }}
                                         </a>
                                     </td>
-                                    <td>{{ $unit->company->company_name ?? '-' }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ $unit->companies_count }}</span>
+                                    </td>
                                     <td>{{ $unit->manager_name ?? '-' }}</td>
                                     <td>{{ $unit->phone ?? '-' }}</td>
-                                    <td>
-                                        <span class="badge bg-info">{{ $unit->branches_count }}</span>
-                                    </td>
                                     <td>
                                         @if($unit->is_active)
                                             <span class="badge bg-success">نشط</span>
