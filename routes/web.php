@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\JournalEntryController;
+use App\Http\Controllers\VoucherController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +24,10 @@ Route::resource('accounts', AccountController::class);
 
 // القيود اليومية
 Route::resource('journal-entries', JournalEntryController::class);
+
+// سندات الصرف والقبض
+Route::resource('vouchers', VoucherController::class);
+Route::get('vouchers/get-accounts', [VoucherController::class, 'getAccounts'])->name('vouchers.get-accounts');
+Route::post('vouchers/{voucher}/approve', [VoucherController::class, 'approve'])->name('vouchers.approve');
+Route::post('vouchers/{voucher}/reject', [VoucherController::class, 'reject'])->name('vouchers.reject');
+Route::post('vouchers/{voucher}/submit', [VoucherController::class, 'submit'])->name('vouchers.submit');

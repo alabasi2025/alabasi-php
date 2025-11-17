@@ -4,22 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Voucher extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'unit_id',
-        'voucher_type',
         'voucher_number',
+        'voucher_type',
+        'payment_method',
         'voucher_date',
-        'account_id',
-        'analytical_account_id',
         'amount',
+        'currency',
+        'beneficiary_name',
+        'analytical_account_id',
+        'account_id',
         'description',
-        'reference_number',
+        'notes',
+        'unit_id',
+        'company_id',
+        'branch_id',
         'status',
+        'journal_entry_id',
         'created_by',
         'approved_by',
         'approved_at'
@@ -49,5 +56,56 @@ class Voucher extends Model
     public function approver()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, 'unit_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
+    public function journalEntry()
+    {
+        return $this->belongsTo(JournalEntry::class, 'journal_entry_id');
+    }
+
+    // Scopes
+    public function scopePayment($query)
+    {
+        return $query->where('voucher_type', 'payment');
+    }
+
+    public function scopeReceipt($query)
+    {
+        return $query->where('voucher_type', 'receipt');
+    }
+
+    public function scopeCash($query)
+    {
+        return $query->where('payment_method', 'cash');
+    }
+
+    public function scopeBank($query)
+    {
+        return $query->where('payment_method', 'bank');
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
     }
 }
