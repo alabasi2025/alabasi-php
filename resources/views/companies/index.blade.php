@@ -60,12 +60,22 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('companies.show', $company) }}" class="btn btn-sm btn-info">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('companies.edit', $company) }}" class="btn btn-sm btn-warning">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('companies.show', $company) }}" class="btn btn-sm btn-info" title="عرض">
+                                                <i class="fas fa-eye"></i> عرض
+                                            </a>
+                                            <a href="{{ route('companies.edit', $company) }}" class="btn btn-sm btn-warning" title="تعديل">
+                                                <i class="fas fa-edit"></i> تعديل
+                                            </a>
+                                            <form action="{{ route('companies.destroy', $company) }}" method="POST" class="d-inline" 
+                                                  onsubmit="return confirm('هل أنت متأكد من حذف هذه المؤسسة؟')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger" title="حذف">
+                                                    <i class="fas fa-trash"></i> حذف
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                                 @empty
