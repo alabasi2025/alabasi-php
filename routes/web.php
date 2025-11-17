@@ -9,6 +9,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\AccountTypeController;
+use App\Http\Controllers\AnalyticalAccountTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,9 @@ Route::resource('accounts', AccountController::class);
 
 // أنواع الحسابات
 Route::resource('account-types', AccountTypeController::class);
+
+// أنواع الحسابات التحليلية
+Route::resource('analytical-account-types', AnalyticalAccountTypeController::class);
 
 // القيود اليومية
 Route::resource('journal-entries', JournalEntryController::class);

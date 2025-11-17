@@ -26,6 +26,7 @@
                     <a href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> لوحة التحكم</a>
                     <a href="{{ route('accounts.index') }}"><i class="bi bi-list-ul"></i> دليل الحسابات</a>
                     <a href="{{ route('account-types.index') }}"><i class="bi bi-tags"></i> أنواع الحسابات</a>
+                    <a href="{{ route('analytical-account-types.index') }}"><i class="bi bi-layers"></i> أنواع الحسابات التحليلية</a>
                     <a href="{{ route('journal-entries.index') }}"><i class="bi bi-journal-text"></i> القيود اليومية</a>
                     <a href="#"><i class="bi bi-receipt"></i> السندات</a>
                     <a href="#"><i class="bi bi-people"></i> الحسابات التحليلية</a>
