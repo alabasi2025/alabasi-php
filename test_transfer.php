@@ -32,13 +32,13 @@ try {
     echo "💸 إنشاء تحويل 5000 ريال...\n";
     
     $transfer = $clearingService->createTransfer([
-        'source_unit_id' => 2,
-        'source_company_id' => 1,
+        'source_unit_id' => 1,  // وحدة الحديدة
+        'source_company_id' => 1,  // أعمال الموظفين
         'source_account_id' => $sourceAccount->id,
         'source_branch_id' => 1,
         
-        'target_unit_id' => 2,
-        'target_company_id' => 2,
+        'target_unit_id' => 1,  // نفس الوحدة
+        'target_company_id' => 2,  // أعمال المحاسب
         'target_account_id' => $targetAccount->id,
         'target_branch_id' => 2,
         
