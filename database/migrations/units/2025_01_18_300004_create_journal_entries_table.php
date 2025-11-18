@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('branch_id')->nullable()->constrained('branches')->onDelete('set null');
             
             // معلومات القيد
-            $table->string('entry_number')->unique();
+            $table->string('entry_number');
             $table->date('entry_date');
             $table->text('description');
             
@@ -50,6 +50,9 @@ return new class extends Migration
             $table->index('entry_type');
             $table->index('status');
             $table->index('clearing_transaction_id');
+            
+            // Unique constraint على company_id + entry_number
+            $table->unique(['company_id', 'entry_number']);
         });
     }
 
