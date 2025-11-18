@@ -60,7 +60,7 @@ class UnitDatabaseSeeder extends Seeder
             $branch = Branch::on($connection)->create([
                 'company_id' => $company->id,
                 'name' => 'فرع الحديدة',
-                'code' => 'BR005',
+                'code' => 'BR' . str_pad($companyId, 3, '0', STR_PAD_LEFT),
                 'address' => 'الحديدة، شارع الكورنيش',
                 'phone' => '+967 777 000 001',
                 'manager_name' => 'أحمد محمد',
