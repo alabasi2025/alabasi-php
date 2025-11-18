@@ -7,6 +7,7 @@ use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AnalyticalAccountTypeController;
@@ -59,6 +60,8 @@ Route::resource('companies', CompanyController::class);
 
 // الوحدات
 Route::resource('units', UnitController::class);
+// الفروع
+Route::resource('branches', BranchController::class);
 Route::get('units/get-by-company', [UnitController::class, 'getByCompany'])->name('units.get-by-company');
 
 // دليل النظام
