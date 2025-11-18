@@ -34,7 +34,7 @@ Route::get('/test-login', function() {
 
 // صفحة تسجيل الدخول
 Route::get('/login', function() {
-    if (session('unit_id')) {
+    if (session('unit_id') && session('database')) {
         return redirect('/dashboard');
     }
     
@@ -88,7 +88,12 @@ Route::get('/logout', function() {
 })->name('logout');
 
 // الصفحة الرئيسية - لوحة التحكم
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/', function() {
+    if (!session('unit_id') || !session('database')) {
+        return redirect('/login');
+    }
+    return app(DashboardController::class)->index();
+})->name('dashboard');
 
 // تغيير السياق (الوحدة والمؤسسة)
 Route::post('/context/set-unit', [ContextSelectorController::class, 'setActiveUnit'])->name('context.set-unit');
