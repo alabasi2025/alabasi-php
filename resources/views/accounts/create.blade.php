@@ -17,11 +17,17 @@
                     <div class="card-body">
                         {{-- Company Info --}}
                         <div class="alert alert-info">
-                            <i class="fas fa-building"></i> المؤسسة: <strong>{{ $company->name }}</strong>
+                            <i class="fas fa-building"></i> <strong>الوحدة:</strong> {{ $company->unit->unit_name }}
+                            &nbsp;|&nbsp;
+                            <i class="fas fa-briefcase"></i> <strong>المؤسسة:</strong> {{ $company->company_name }}
+                            &nbsp;
+                            <a href="{{ route('context.selector') }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-exchange-alt"></i> تغيير
+                            </a>
                         </div>
 
                         {{-- Parent Account Info (if adding sub-account) --}}
-                        @if($parentAccount)
+                        @if(isset($parentAccount))
                             <div class="alert alert-success">
                                 <i class="fas fa-level-up-alt"></i> 
                                 <strong>إضافة حساب فرعي تحت:</strong> 
@@ -102,7 +108,7 @@
                                                name="is_main" 
                                                id="is_main_true" 
                                                value="1"
-                                               {{ old('is_main', $parentAccount ? '0' : '1') == '1' ? 'checked' : '' }}
+                                               {{ old('is_main', isset($parentAccount) ? '0' : '1') == '1' ? 'checked' : '' }}
                                                onchange="toggleAnalyticalType()">
                                         <label class="form-check-label" for="is_main_true">
                                             <i class="fas fa-folder text-primary"></i> حساب رئيسي (للترتيب فقط)
@@ -114,7 +120,7 @@
                                                name="is_main" 
                                                id="is_main_false" 
                                                value="0"
-                                               {{ old('is_main', $parentAccount ? '0' : '1') == '0' ? 'checked' : '' }}
+                                               {{ old('is_main', isset($parentAccount) ? '0' : '1') == '0' ? 'checked' : '' }}
                                                onchange="toggleAnalyticalType()">
                                         <label class="form-check-label" for="is_main_false">
                                             <i class="fas fa-file text-success"></i> حساب فرعي (يمكن الترحيل عليه)
@@ -125,7 +131,7 @@
                         </div>
 
                         {{-- Parent Account (only for main accounts) --}}
-                        <div class="row" id="parent_account_row" style="display: {{ old('is_main', $parentAccount ? '0' : '1') == '1' ? 'block' : 'none' }};">
+                        <div class="row" id="parent_account_row" style="display: {{ old('is_main', isset($parentAccount) ? '0' : '1') == '1' ? 'block' : 'none' }};">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="parent_id">الحساب الأب (اختياري)</label>
@@ -134,7 +140,7 @@
                                             class="form-control @error('parent_id') is-invalid @enderror">
                                         <option value="">-- بدون حساب أب --</option>
                                         @foreach($parentAccounts as $parent)
-                                            <option value="{{ $parent->id }}" {{ old('parent_id', $parentAccount ? $parentAccount->id : '') == $parent->id ? 'selected' : '' }}>
+                                            <option value="{{ $parent->id }}" {{ old('parent_id', isset($parentAccount) ? $parentAccount->id : '') == $parent->id ? 'selected' : '' }}>
                                                 {{ $parent->account_code }} - {{ $parent->name }}
                                             </option>
                                         @endforeach
@@ -148,7 +154,7 @@
                         </div>
 
                         {{-- Account Nature (only for sub accounts) --}}
-                        <div class="row" id="account_nature_row" style="display: {{ old('is_main', $parentAccount ? '0' : '1') == '0' ? 'block' : 'none' }};">
+                        <div class="row" id="account_nature_row" style="display: {{ old('is_main', isset($parentAccount) ? '0' : '1') == '0' ? 'block' : 'none' }};">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="account_nature">طبيعة الحساب <span class="text-danger">*</span></label>
@@ -242,6 +248,33 @@ function toggleAnalyticalType() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     toggleAnalyticalType();
+    
+    // Handle unit change to load companies
+    const unitSelect = document.getElementById('unit_id');
+    const companySelect = document.getElementById('company_id');
+    
+    if (unitSelect) {
+        unitSelect.addEventListener('change', function() {
+            const unitId = this.value;
+            companySelect.innerHTML = '<option value="">-- اختر المؤسسة --</option>';
+            
+            if (unitId) {
+                fetch(`/api/companies-by-unit/${unitId}`)
+                    .then(response => response.json())
+                    .then(companies => {
+                        companies.forEach(company => {
+                            const option = document.createElement('option');
+                            option.value = company.id;
+                            option.textContent = company.company_name;
+                            companySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('خطأ في تحميل المؤسسات:', error);
+                    });
+            }
+        });
+    }
 });
 </script>
 

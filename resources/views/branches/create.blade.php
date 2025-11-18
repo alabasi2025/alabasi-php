@@ -213,41 +213,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // تصفية المؤسسات بناءً على الوحدة المختارة
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('unit_id').addEventListener('change', function() {
-    const unitId = this.value;
-    const companySelect = document.getElementById('company_id');
-    
-    // إعادة تعيين قائمة المؤسسات
-    companySelect.innerHTML = '<option value="">جاري التحميل...</option>';
-    companySelect.disabled = true;
-    
-    if (unitId) {
-        // جلب المؤسسات التابعة للوحدة المختارة
-        fetch(`/api/companies-by-unit/${unitId}`)
-            .then(response => response.json())
-            .then(data => {
-                companySelect.innerHTML = '<option value="">اختر المؤسسة</option>';
-                
-                if (data.length > 0) {
-                    data.forEach(company => {
-                        const option = document.createElement('option');
-                        option.value = company.id;
-                        option.textContent = company.company_name;
-                        companySelect.appendChild(option);
+    const unitSelect = document.getElementById('unit_id');
+    if (unitSelect) {
+        unitSelect.addEventListener('change', function() {
+            const unitId = this.value;
+            const companySelect = document.getElementById('company_id');
+            
+            // إعادة تعيين قائمة المؤسسات
+            companySelect.innerHTML = '<option value="">جاري التحميل...</option>';
+            companySelect.disabled = true;
+            
+            if (unitId) {
+                // جلب المؤسسات التابعة للوحدة المختارة
+                fetch(`/api/companies-by-unit/${unitId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        companySelect.innerHTML = '<option value="">اختر المؤسسة</option>';
+                        
+                        if (data.length > 0) {
+                            data.forEach(company => {
+                                const option = document.createElement('option');
+                                option.value = company.id;
+                                option.textContent = company.company_name;
+                                companySelect.appendChild(option);
+                            });
+                            companySelect.disabled = false;
+                        } else {
+                            companySelect.innerHTML = '<option value="">لا توجد مؤسسات لهذه الوحدة</option>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        companySelect.innerHTML = '<option value="">حدث خطأ في التحميل</option>';
                     });
-                    companySelect.disabled = false;
-                } else {
-                    companySelect.innerHTML = '<option value="">لا توجد مؤسسات لهذه الوحدة</option>';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                companySelect.innerHTML = '<option value="">حدث خطأ في التحميل</option>';
-            });
-    } else {
-        companySelect.innerHTML = '<option value="">اختر الوحدة أولاً</option>';
+            } else {
+                companySelect.innerHTML = '<option value="">اختر الوحدة أولاً</option>';
+            }
+        });
     }
-    });
 });
 </script>
 @endsection

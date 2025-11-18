@@ -46,17 +46,20 @@ class AccountController extends Controller
      */
     public function create(Request $request)
     {
-        $companyId = $request->get('company_id', 1);
+        // Get active company from session
+        $companyId = session('active_company_id');
         $company = Company::with('unit')->findOrFail($companyId);
-        $companies = Company::with('unit')->get();
         
-        // Get all accounts for parent selection
+        // Get all account types for this company
+        $accountTypes = \App\Models\AccountType::where('company_id', $companyId)->get();
+        
+        // Get parent accounts for this company
         $parentAccounts = Account::where('company_id', $companyId)
             ->where('is_parent', true)
             ->orderBy('code')
             ->get();
         
-        return view('accounts.create', compact('company', 'companies', 'parentAccounts'));
+        return view('accounts.create', compact('company', 'parentAccounts', 'accountTypes'));
     }
 
     /**
@@ -65,7 +68,6 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'company_id' => 'required|exists:companies,id',
             'code' => 'required|string|max:20|unique:accounts,code',
             'name_ar' => 'required|string|max:255',
             'name_en' => 'nullable|string|max:255',
@@ -79,6 +81,10 @@ class AccountController extends Controller
         // Set default values
         $validated['is_parent'] = $request->has('is_parent') ? true : false;
         $validated['allow_posting'] = $request->has('allow_posting') ? true : false;
+        
+        // Add unit_id and company_id from session
+        $validated['unit_id'] = session('active_unit_id');
+        $validated['company_id'] = session('active_company_id');
 
         $account = Account::create($validated);
 

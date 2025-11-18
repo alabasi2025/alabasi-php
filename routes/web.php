@@ -13,6 +13,7 @@ use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AnalyticalAccountTypeController;
 use App\Http\Controllers\AnalyticalAccountController;
 use App\Http\Controllers\SetupController;
+use App\Http\Controllers\ContextSelectorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,11 @@ use App\Http\Controllers\SetupController;
 */
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+// تغيير السياق (الوحدة والمؤسسة)
+Route::post('/context/set-unit', [ContextSelectorController::class, 'setActiveUnit'])->name('context.set-unit');
+Route::post('/context/set-company', [ContextSelectorController::class, 'setActiveCompany'])->name('context.set-company');
+Route::get('/context/selector', [ContextSelectorController::class, 'showSelector'])->name('context.selector');
 
 // إعداد النظام
 Route::get('/setup', [SetupController::class, 'index'])->name('setup.index');
