@@ -163,6 +163,7 @@
                                         <option value="employee" {{ old('account_nature') == 'employee' ? 'selected' : '' }}>👔 موظف</option>
                                         <option value="debtor" {{ old('account_nature') == 'debtor' ? 'selected' : '' }}>📗 حساب مدين</option>
                                         <option value="creditor" {{ old('account_nature') == 'creditor' ? 'selected' : '' }}>📕 حساب دائن</option>
+                                        <option value="analytical" {{ old('account_nature') == 'analytical' ? 'selected' : '' }}>📊 حساب تحليلي</option>
                                     </select>
                                     @error('account_nature')
                                         <div class="invalid-feedback">{{ $message }}</div>

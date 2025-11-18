@@ -83,8 +83,9 @@ class AnalyticalAccountController extends Controller
 
         $accounts = collect();
         if ($analyticalAccountType) {
+            // عرض الحسابات من نوع "تحليلي" فقط
             $accounts = Account::where('company_id', $company->id)
-                ->where('analytical_account_type_id', $analyticalAccountType->id)
+                ->where('account_nature', 'analytical')
                 ->where('is_main', false)
                 ->where('is_active', true)
                 ->orderBy('account_code')
@@ -137,8 +138,9 @@ class AnalyticalAccountController extends Controller
             ->orderBy('code')
             ->get();
 
+        // عرض الحسابات من نوع "تحليلي" فقط
         $accounts = Account::where('company_id', $company->id)
-            ->where('analytical_account_type_id', $analyticalAccount->analytical_account_type_id)
+            ->where('account_nature', 'analytical')
             ->where('is_main', false)
             ->where('is_active', true)
             ->orderBy('account_code')

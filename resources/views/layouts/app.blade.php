@@ -184,6 +184,8 @@
                         <div class="collapse" id="accountingSettings">
                             <a href="{{ route('accounts.index') }}" class="sub-sub-item"><i class="bi bi-list-ul"></i> الدليل المحاسبي</a>
                             <a href="{{ route('account-types.index') }}" class="sub-sub-item"><i class="bi bi-tags"></i> أنواع الحسابات</a>
+                            <a href="{{ route('analytical-account-types.index') }}" class="sub-sub-item"><i class="bi bi-layers"></i> أنواع الحسابات التحليلية</a>
+                            <a href="{{ route('analytical-accounts.index') }}" class="sub-sub-item"><i class="bi bi-people"></i> الحسابات التحليلية</a>
                         </div>
                     </div>
                     
