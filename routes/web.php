@@ -28,8 +28,7 @@ use App\Http\Controllers\ContextSelectorController;
 
 // صفحة تسجيل الدخول الجديدة
 Route::get('/login', function() {
-    session_start();
-    if (isset($_SESSION['unit_id'])) {
+    if (session('unit_id')) {
         return redirect('/dashboard');
     }
     
@@ -38,8 +37,6 @@ Route::get('/login', function() {
 })->name('login');
 
 Route::post('/login-process', function(\Illuminate\Http\Request $request) {
-    session_start();
-    
     $unit_id = $request->input('unit_id');
     $company_id = $request->input('company_id');
     
@@ -47,12 +44,14 @@ Route::post('/login-process', function(\Illuminate\Http\Request $request) {
         return redirect('/login?error=no_unit');
     }
     
-    $_SESSION['unit_id'] = $unit_id;
+    session(['unit_id' => $unit_id]);
     
     if ($unit_id === 'main') {
-        $_SESSION['unit_name'] = 'القاعدة المركزية';
-        $_SESSION['database'] = 'main';
-        $_SESSION['is_main'] = true;
+        session([
+            'unit_name' => 'القاعدة المركزية',
+            'database' => 'main',
+            'is_main' => true
+        ]);
     } else {
         if (!$company_id) {
             return redirect('/login?error=no_company');
@@ -65,27 +64,27 @@ Route::post('/login-process', function(\Illuminate\Http\Request $request) {
             return redirect('/login?error=invalid');
         }
         
-        $_SESSION['unit_name'] = $unit->name;
-        $_SESSION['company_id'] = $company_id;
-        $_SESSION['company_name'] = $company->name;
-        $_SESSION['database'] = $unit->database_name;
-        $_SESSION['is_main'] = false;
+        session([
+            'unit_name' => $unit->name,
+            'company_id' => $company_id,
+            'company_name' => $company->name,
+            'database' => $unit->database_name,
+            'is_main' => false
+        ]);
     }
     
     return redirect('/dashboard');
 })->name('login.process');
 
 Route::get('/dashboard', function() {
-    session_start();
-    if (!isset($_SESSION['unit_id'])) {
+    if (!session('unit_id')) {
         return redirect('/login');
     }
     return view('new_dashboard');
 })->name('new.dashboard');
 
 Route::get('/logout', function() {
-    session_start();
-    session_destroy();
+    session()->flush();
     return redirect('/login');
 })->name('logout');
 

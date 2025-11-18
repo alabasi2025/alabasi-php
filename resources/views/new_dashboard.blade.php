@@ -1,7 +1,6 @@
 @php
-session_start();
-$is_main = $_SESSION['is_main'] ?? false;
-$database = $_SESSION['database'] ?? 'main';
+$is_main = session('is_main', false);
+$database = session('database', 'main');
 
 use App\Models\Main\ClearingTransaction;
 use App\Models\Unit\Account;
@@ -13,7 +12,7 @@ if ($is_main) {
     $total_amount = ClearingTransaction::where('status', 'completed')->sum('amount');
     $recent_transfers = ClearingTransaction::orderBy('created_at', 'desc')->limit(10)->get();
 } else {
-    $company_id = $_SESSION['company_id'];
+    $company_id = session('company_id');
     $total_accounts = Account::on($database)->where('company_id', $company_id)->count();
     $total_entries = JournalEntry::on($database)->where('company_id', $company_id)->count();
     $posted_entries = JournalEntry::on($database)->where('company_id', $company_id)->where('is_posted', true)->count();
@@ -182,9 +181,9 @@ if ($is_main) {
     <div class="header">
         <h1>🏢 نظام Alabasi المحاسبي</h1>
         <div class="user-info">
-            <span>📍 {{ $_SESSION['unit_name'] }}</span>
+            <span>📍 {{ session('unit_name') }}</span>
             @if(!$is_main)
-                <span>🏪 {{ $_SESSION['company_name'] }}</span>
+                <span>🏪 {{ session('company_name') }}</span>
             @endif
             <a href="/logout">🚪 خروج</a>
         </div>
