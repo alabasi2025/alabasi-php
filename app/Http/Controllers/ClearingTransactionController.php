@@ -20,28 +20,43 @@ class ClearingTransactionController extends Controller
     /**
      * عرض قائمة التحويلات
      */
-    public function index()
+    public function index(Request $request)
     {
         $isMain = session('is_main');
         $unitId = session('unit_id');
 
-        if ($isMain) {
-            // القاعدة المركزية: عرض جميع التحويلات
-            $transactions = ClearingTransaction::with(['sourceUnit', 'targetUnit', 'sourceCompany', 'targetCompany'])
-                ->orderBy('created_at', 'desc')
-                ->paginate(20);
-        } else {
+        $query = ClearingTransaction::with(['sourceUnit', 'targetUnit', 'sourceCompany', 'targetCompany'])
+            ->orderBy('created_at', 'desc');
+
+        // فلترة حسب الصلاحيات
+        if (!$isMain) {
             // الوحدات: عرض التحويلات الخاصة بالوحدة فقط
-            $transactions = ClearingTransaction::with(['sourceUnit', 'targetUnit', 'sourceCompany', 'targetCompany'])
-                ->where(function($query) use ($unitId) {
-                    $query->where('source_unit_id', $unitId)
-                          ->orWhere('target_unit_id', $unitId);
-                })
-                ->orderBy('created_at', 'desc')
-                ->paginate(20);
+            $query->where(function($q) use ($unitId) {
+                $q->where('source_unit_id', $unitId)
+                  ->orWhere('target_unit_id', $unitId);
+            });
         }
 
-        return view('clearing-transactions.index', compact('transactions', 'isMain'));
+        // تطبيق الفلاتر
+        if ($request->filled('type')) {
+            $query->where('transfer_type', $request->type);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('from_date')) {
+            $query->whereDate('transaction_date', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('transaction_date', '<=', $request->to_date);
+        }
+
+        $transactions = $query->paginate(20);
+
+        return view('clearing_transactions.index', compact('transactions', 'isMain'));
     }
 
     /**
@@ -143,6 +158,104 @@ class ClearingTransactionController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'فشل ترحيل التحويل: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * تقرير الحسابات الوسيطة
+     */
+    public function report(Request $request)
+    {
+        $query = ClearingTransaction::with(['sourceUnit', 'targetUnit', 'sourceCompany', 'targetCompany'])
+            ->where('status', 'completed')
+            ->orderBy('transaction_date', 'desc');
+
+        // تطبيق الفلاتر
+        if ($request->filled('unit_id')) {
+            $query->where(function($q) use ($request) {
+                $q->where('source_unit_id', $request->unit_id)
+                  ->orWhere('target_unit_id', $request->unit_id);
+            });
+        }
+
+        if ($request->filled('company_id')) {
+            $query->where(function($q) use ($request) {
+                $q->where('source_company_id', $request->company_id)
+                  ->orWhere('target_company_id', $request->company_id);
+            });
+        }
+
+        if ($request->filled('from_date')) {
+            $query->whereDate('transaction_date', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('transaction_date', '<=', $request->to_date);
+        }
+
+        $transactions = $query->get();
+
+        // حساب الإجماليات
+        $totalDebit = $transactions->sum('amount');
+        $totalCredit = $transactions->sum('amount');
+        $balance = $totalDebit - $totalCredit; // يجب أن يكون صفر
+
+        $units = Unit::where('is_active', true)->get();
+        $companies = Company::where('is_active', true)->get();
+
+        return view('clearing_transactions.report', compact(
+            'transactions', 
+            'totalDebit', 
+            'totalCredit', 
+            'balance',
+            'units',
+            'companies'
+        ));
+    }
+
+    /**
+     * API: جلب المؤسسات حسب الوحدة
+     */
+    public function getCompaniesByUnit($unitId)
+    {
+        try {
+            $companies = Company::where('unit_id', $unitId)
+                ->where('is_active', true)
+                ->select('id', 'name', 'clearing_account_number')
+                ->get();
+
+            return response()->json($companies);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * API: جلب الحسابات حسب المؤسسة
+     */
+    public function getAccountsByCompany($unitId, $companyId)
+    {
+        try {
+            // التبديل إلى قاعدة بيانات الوحدة
+            $unit = Unit::find($unitId);
+            if (!$unit) {
+                return response()->json(['error' => 'Unit not found'], 404);
+            }
+
+            config(['database.default' => $unit->database_name]);
+            
+            $accounts = \App\Models\Unit\Account::where('company_id', $companyId)
+                ->where('is_active', true)
+                ->select('id', 'account_number', 'name')
+                ->get();
+
+            // إعادة الاتصال إلى القاعدة المركزية
+            config(['database.default' => 'main']);
+
+            return response()->json($accounts);
+        } catch (\Exception $e) {
+            config(['database.default' => 'main']);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

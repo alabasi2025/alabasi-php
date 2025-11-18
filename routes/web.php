@@ -161,5 +161,11 @@ Route::resource('employees', App\Http\Controllers\EmployeeController::class);
 // التحويلات بين المؤسسات والوحدات (جديد)
 Route::resource('clearing-transactions', ClearingTransactionController::class);
 Route::post('clearing-transactions/{id}/approve', [ClearingTransactionController::class, 'approve'])->name('clearing-transactions.approve');
-Route::post('clearing-transactions/{id}/cancel', [ClearingTransactionController::class, 'cancel'])->name('clearing-transactions.cancel');
+Route::delete('clearing-transactions/{id}/cancel', [ClearingTransactionController::class, 'cancel'])->name('clearing-transactions.cancel');
 Route::post('clearing-transactions/{id}/sync', [ClearingTransactionController::class, 'sync'])->name('clearing-transactions.sync');
+Route::post('clearing-transactions/{id}/post', [ClearingTransactionController::class, 'sync'])->name('clearing-transactions.post');
+Route::get('clearing-transactions-report', [ClearingTransactionController::class, 'report'])->name('clearing-transactions.report');
+
+// API endpoints للتحويلات
+Route::get('/api/units/{unitId}/companies', [ClearingTransactionController::class, 'getCompaniesByUnit']);
+Route::get('/api/units/{unitId}/companies/{companyId}/accounts', [ClearingTransactionController::class, 'getAccountsByCompany']);
