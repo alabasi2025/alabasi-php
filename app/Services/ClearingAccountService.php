@@ -95,11 +95,16 @@ class ClearingAccountService
 
         try {
             // البحث عن الحساب الوسيط المناسب
+            // للتحويل بين مؤسسات: related_unit_id = source_unit_id
+            $relatedUnitId = $clearingTransaction->transaction_type === 'inter_company' 
+                ? $data['source_unit_id'] 
+                : $data['target_unit_id'];
+                
             $clearingAccount = $this->getClearingAccount(
                 $sourceConnection,
                 $data['source_company_id'],
                 $clearingTransaction->transaction_type,
-                $data['target_unit_id'],
+                $relatedUnitId,
                 $data['target_company_id']
             );
 
@@ -177,11 +182,16 @@ class ClearingAccountService
 
         try {
             // البحث عن الحساب الوسيط المناسب
+            // للتحويل بين مؤسسات: related_unit_id = target_unit_id
+            $relatedUnitId = $clearingTransaction->transaction_type === 'inter_company' 
+                ? $data['target_unit_id'] 
+                : $data['source_unit_id'];
+                
             $clearingAccount = $this->getClearingAccount(
                 $targetConnection,
                 $data['target_company_id'],
                 $clearingTransaction->transaction_type,
-                $data['source_unit_id'],
+                $relatedUnitId,
                 $data['source_company_id']
             );
 
