@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\QueueController;
 |
 */
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->group(function () {
     
     // لوحة التحكم الرئيسية
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
