@@ -59,8 +59,10 @@ try {
     echo "   - رصيد صندوق أعمال المحاسب: " . number_format($targetAccount->getBalance(), 2) . " ريال\n\n";
     
     // عرض القيود
-    $sourceEntry = JournalEntry::on('unit_2')->find($transfer->source_entry_id);
-    $targetEntry = JournalEntry::on('unit_2')->find($transfer->target_entry_id);
+    // الحصول على معلومات التحويل من القاعدة المركزية
+    $clearingTrans = ClearingTransaction::on('main')->find($transfer->id);
+    $sourceEntry = JournalEntry::on('unit_2')->find($clearingTrans->source_entry_id);
+    $targetEntry = JournalEntry::on('unit_2')->find($clearingTrans->target_entry_id);
     
     echo "📝 القيد في أعمال الموظفين:\n";
     echo "   - رقم القيد: " . $sourceEntry->entry_number . "\n";
