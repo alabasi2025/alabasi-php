@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\AccountType as AccountTypeEnum;
 
 class Account extends Model
 {
@@ -15,10 +16,16 @@ class Account extends Model
         'analytical_account_type_id',
         'parent_id',
         'account_code',
+        'code', // Alias for account_code
         'account_name',
+        'name', // Alias for account_name
+        'name_en',
+        'type', // New: Using Enum
         'level',
+        'balance',
         'is_active',
         'is_main',
+        'is_analytical',
         'description',
         'notes',
     ];
@@ -26,6 +33,14 @@ class Account extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'is_main' => 'boolean',
+        'is_analytical' => 'boolean',
+        'balance' => 'decimal:2',
+        'type' => AccountTypeEnum::class, // Cast to Enum
+    ];
+
+    protected $appends = [
+        'full_path',
+        'full_code',
     ];
 
     /**
@@ -77,11 +92,11 @@ class Account extends Model
     }
 
     /**
-     * العلاقة مع القيود اليومية
+     * العلاقة مع تفاصيل القيود اليومية
      */
-    public function journalEntries()
+    public function journalEntryDetails()
     {
-        return $this->hasMany(JournalEntry::class);
+        return $this->hasMany(JournalEntryDetail::class);
     }
 
     /**
@@ -90,6 +105,14 @@ class Account extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope: الحسابات غير النشطة
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('is_active', false);
     }
 
     /**
@@ -109,6 +132,14 @@ class Account extends Model
     }
 
     /**
+     * Scope: الحسابات التحليلية
+     */
+    public function scopeAnalytical($query)
+    {
+        return $query->where('is_analytical', true);
+    }
+
+    /**
      * Scope: حسب المؤسسة
      */
     public function scopeForCompany($query, $companyId)
@@ -117,19 +148,62 @@ class Account extends Model
     }
 
     /**
-     * Scope: حسب نوع الحساب
+     * Scope: حسب نوع الحساب (using Enum)
      */
-    public function scopeOfType($query, $accountTypeId)
+    public function scopeOfType($query, AccountTypeEnum|string $type)
     {
-        return $query->where('account_type_id', $accountTypeId);
+        if ($type instanceof AccountTypeEnum) {
+            $type = $type->value;
+        }
+        return $query->where('type', $type);
     }
 
     /**
-     * Scope: حسب النوع التحليلي
+     * Scope: حسابات الأصول
      */
-    public function scopeOfAnalyticalType($query, $analyticalTypeId)
+    public function scopeAssets($query)
     {
-        return $query->where('analytical_account_type_id', $analyticalTypeId);
+        return $query->where('type', AccountTypeEnum::ASSET->value);
+    }
+
+    /**
+     * Scope: حسابات الخصوم
+     */
+    public function scopeLiabilities($query)
+    {
+        return $query->where('type', AccountTypeEnum::LIABILITY->value);
+    }
+
+    /**
+     * Scope: حسابات حقوق الملكية
+     */
+    public function scopeEquity($query)
+    {
+        return $query->where('type', AccountTypeEnum::EQUITY->value);
+    }
+
+    /**
+     * Scope: حسابات الإيرادات
+     */
+    public function scopeRevenues($query)
+    {
+        return $query->where('type', AccountTypeEnum::REVENUE->value);
+    }
+
+    /**
+     * Scope: حسابات المصروفات
+     */
+    public function scopeExpenses($query)
+    {
+        return $query->where('type', AccountTypeEnum::EXPENSE->value);
+    }
+
+    /**
+     * Scope: حسب المستوى
+     */
+    public function scopeLevel($query, int $level)
+    {
+        return $query->where('level', $level);
     }
 
     /**
@@ -141,15 +215,60 @@ class Account extends Model
     }
 
     /**
+     * Scope: الحسابات الفرعية (لها أب)
+     */
+    public function scopeChildAccounts($query)
+    {
+        return $query->whereNotNull('parent_id');
+    }
+
+    /**
+     * Scope: البحث في الحسابات
+     */
+    public function scopeSearch($query, string $search)
+    {
+        return $query->where(function($q) use ($search) {
+            $q->where('account_code', 'like', "%{$search}%")
+              ->orWhere('code', 'like', "%{$search}%")
+              ->orWhere('account_name', 'like', "%{$search}%")
+              ->orWhere('name', 'like', "%{$search}%")
+              ->orWhere('name_en', 'like', "%{$search}%");
+        });
+    }
+
+    /**
+     * Scope: حسابات الميزانية (أصول + خصوم + حقوق ملكية)
+     */
+    public function scopeBalanceSheet($query)
+    {
+        return $query->whereIn('type', [
+            AccountTypeEnum::ASSET->value,
+            AccountTypeEnum::LIABILITY->value,
+            AccountTypeEnum::EQUITY->value,
+        ]);
+    }
+
+    /**
+     * Scope: حسابات قائمة الدخل (إيرادات + مصروفات)
+     */
+    public function scopeIncomeStatement($query)
+    {
+        return $query->whereIn('type', [
+            AccountTypeEnum::REVENUE->value,
+            AccountTypeEnum::EXPENSE->value,
+        ]);
+    }
+
+    /**
      * الحصول على المسار الكامل للحساب (الأب ← الابن ← الحفيد)
      */
     public function getFullPathAttribute()
     {
-        $path = [$this->account_name];
+        $path = [$this->account_name ?? $this->name];
         $parent = $this->parent;
         
         while ($parent) {
-            array_unshift($path, $parent->account_name);
+            array_unshift($path, $parent->account_name ?? $parent->name);
             $parent = $parent->parent;
         }
         
@@ -161,14 +280,64 @@ class Account extends Model
      */
     public function getFullCodeAttribute()
     {
-        $codes = [$this->account_code];
+        $codes = [$this->account_code ?? $this->code];
         $parent = $this->parent;
         
         while ($parent) {
-            array_unshift($codes, $parent->account_code);
+            array_unshift($codes, $parent->account_code ?? $parent->code);
             $parent = $parent->parent;
         }
         
         return implode('-', $codes);
+    }
+
+    /**
+     * الحصول على اللون حسب نوع الحساب
+     */
+    public function getColorAttribute()
+    {
+        if ($this->type instanceof AccountTypeEnum) {
+            return $this->type->color();
+        }
+        return 'secondary';
+    }
+
+    /**
+     * الحصول على الأيقونة حسب نوع الحساب
+     */
+    public function getIconAttribute()
+    {
+        if ($this->type instanceof AccountTypeEnum) {
+            return $this->type->icon();
+        }
+        return 'bi-circle';
+    }
+
+    /**
+     * الحصول على التسمية حسب نوع الحساب
+     */
+    public function getTypeLabelAttribute()
+    {
+        if ($this->type instanceof AccountTypeEnum) {
+            return $this->type->label();
+        }
+        return '';
+    }
+
+    /**
+     * التحقق من إمكانية الحذف
+     */
+    public function canDelete(): bool
+    {
+        return $this->children()->count() === 0 
+            && $this->journalEntryDetails()->count() === 0;
+    }
+
+    /**
+     * التحقق من إمكانية التعديل
+     */
+    public function canEdit(): bool
+    {
+        return true; // يمكن إضافة شروط إضافية
     }
 }
