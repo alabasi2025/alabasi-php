@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-// إذا كان المستخدم مسجل دخول، انتقل للوحة التحكم
-if (isset($_SESSION['unit_id'])) {
+// إذا كان المستخدم مسجل دخول واختار القاعدة، انتقل للوحة التحكم
+if (isset($_SESSION['unit_id']) && isset($_SESSION['database'])) {
     header('Location: dashboard.php');
     exit;
 }
