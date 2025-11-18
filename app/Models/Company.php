@@ -4,91 +4,59 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'unit_id',
-        'company_code',
-        'company_name',
-        'description',
+        'code',
+        'name',
+        'tax_number',
         'address',
         'phone',
         'email',
-        'tax_number',
-        'registration_number',
-        'director_name',
-        'logo',
-        'is_active'
+        'is_active',
+        'settings',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'settings' => 'array',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
+    }
 
-    /**
-     * علاقة المؤسسة مع الوحدة (المؤسسة تنتمي إلى وحدة واحدة)
-     */
-    public function unit()
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
     }
 
-    /**
-     * علاقة المؤسسة مع الفروع
-     */
-    public function branches()
-    {
-        return $this->hasMany(Branch::class);
-    }
-
-    /**
-     * علاقة المؤسسة مع الحسابات
-     */
-    public function accounts()
+    public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }
 
-    /**
-     * علاقة المؤسسة مع السندات
-     */
-    public function vouchers()
-    {
-        return $this->hasMany(Voucher::class);
-    }
-
-    /**
-     * علاقة المؤسسة مع القيود اليومية
-     */
-    public function journalEntries()
+    public function journalEntries(): HasMany
     {
         return $this->hasMany(JournalEntry::class);
     }
 
-    /**
-     * علاقة المؤسسة مع أنواع الحسابات
-     */
-    public function accountTypes()
+    public function users(): HasMany
     {
-        return $this->hasMany(AccountType::class);
-    }
-
-    /**
-     * علاقة المؤسسة مع أنواع الحسابات التحليلية
-     */
-    public function analyticalAccountTypes()
-    {
-        return $this->hasMany(AnalyticalAccountType::class);
-    }
-
-    /**
-     * Scope للمؤسسات النشطة فقط
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
+        return $this->hasMany(User::class);
     }
 }
