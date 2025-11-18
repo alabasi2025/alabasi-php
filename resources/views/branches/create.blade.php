@@ -204,11 +204,14 @@
 <script src="{{ asset('js/auto-code-generator.js') }}"></script>
 
 <script>
-// تفعيل مولد الرموز التلقائي
-linkNameToCode('branch_name', 'branch_code', 'BR', 15);
+document.addEventListener('DOMContentLoaded', function() {
+    // تفعيل مولد الرموز التلقائي
+    linkNameToCode('branch_name', 'branch_code', 'BR', 15);
+});
 
 // تصفية المؤسسات بناءً على الوحدة المختارة
-document.getElementById('unit_id').addEventListener('change', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('unit_id').addEventListener('change', function() {
     const unitId = this.value;
     const companySelect = document.getElementById('company_id');
     
@@ -242,6 +245,7 @@ document.getElementById('unit_id').addEventListener('change', function() {
     } else {
         companySelect.innerHTML = '<option value="">اختر الوحدة أولاً</option>';
     }
+    });
 });
 </script>
 @endsection
