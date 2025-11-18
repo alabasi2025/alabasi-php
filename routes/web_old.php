@@ -14,7 +14,6 @@ use App\Http\Controllers\AnalyticalAccountTypeController;
 use App\Http\Controllers\AnalyticalAccountController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\ContextSelectorController;
-use App\Http\Controllers\ClearingTransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +31,7 @@ Route::get('/test-login', function() {
     return view('test_login');
 });
 
-// صفحة تسجيل الدخول
+// صفحة تسجيل الدخول الجديدة
 Route::get('/login', function() {
     if (session('unit_id')) {
         return redirect('/dashboard');
@@ -79,15 +78,21 @@ Route::post('/login-process', function(\Illuminate\Http\Request $request) {
         ]);
     }
     
-    return redirect('/');
+    return redirect('/dashboard');
 })->name('login.process');
+
+Route::get('/dashboard', function() {
+    if (!session('unit_id')) {
+        return redirect('/login');
+    }
+    return view('new_dashboard');
+})->name('new.dashboard');
 
 Route::get('/logout', function() {
     session()->flush();
     return redirect('/login');
 })->name('logout');
 
-// الصفحة الرئيسية - لوحة التحكم
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // تغيير السياق (الوحدة والمؤسسة)
@@ -126,11 +131,8 @@ Route::post('vouchers/{voucher}/submit', [VoucherController::class, 'submit'])->
 // المؤسسات
 Route::resource('companies', CompanyController::class);
 
-// الوحدات (محصورة بالقاعدة المركزية فقط)
-Route::middleware(['check.main.unit'])->group(function () {
-    Route::resource('units', UnitController::class);
-});
-
+// الوحدات
+Route::resource('units', UnitController::class);
 // الفروع
 Route::resource('branches', BranchController::class);
 Route::get('units/get-by-company', [UnitController::class, 'getByCompany'])->name('units.get-by-company');
@@ -145,7 +147,15 @@ Route::get('/manual', [App\Http\Controllers\ManualController::class, 'index'])->
 Route::post('/api/manual/update', [App\Http\Controllers\ManualController::class, 'update'])->name('manual.update');
 Route::get('/manual/export', [App\Http\Controllers\ManualController::class, 'export'])->name('manual.export');
 
-// التحويلات بين المؤسسات والوحدات (جديد)
-Route::resource('clearing-transactions', ClearingTransactionController::class);
-Route::post('clearing-transactions/{id}/approve', [ClearingTransactionController::class, 'approve'])->name('clearing-transactions.approve');
-Route::post('clearing-transactions/{id}/cancel', [ClearingTransactionController::class, 'cancel'])->name('clearing-transactions.cancel');
+// سجل التحديثات
+Route::get('/updates', [App\Http\Controllers\UpdateController::class, 'index'])->name('updates.index');
+Route::post('/api/updates/sync', [App\Http\Controllers\UpdateController::class, 'sync'])->name('updates.sync');
+
+// الصناديق والبنوك
+Route::resource('cashboxes', App\Http\Controllers\CashBoxController::class);
+Route::resource('bank-accounts', App\Http\Controllers\BankAccountController::class);
+
+// العملاء والموردين والموظفين
+Route::resource('customers', App\Http\Controllers\CustomerController::class);
+Route::resource('suppliers', App\Http\Controllers\SupplierController::class);
+Route::resource('employees', App\Http\Controllers\EmployeeController::class);
