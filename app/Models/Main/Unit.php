@@ -51,8 +51,8 @@ class Unit extends Model
      *
      * @return string
      */
-    public function getConnectionName(): string
+    public function getUnitConnectionName(): string
     {
-        return $this->database_name;
+        return $this->database_name ?? 'unit_2';
     }
 }
