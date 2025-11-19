@@ -77,20 +77,17 @@ class AdminDevelopmentSeeder extends Seeder
             [
                 'name' => 'مدير النظام',
                 'email' => 'admin@alabasi.es',
-                'password' => Hash::make('admin123'),
-                'role' => 'admin',
+                'password' => Hash::make('password'),
             ],
             [
                 'name' => 'مطور النظام',
                 'email' => 'developer@alabasi.es',
-                'password' => Hash::make('dev123'),
-                'role' => 'developer',
+                'password' => Hash::make('password'),
             ],
             [
                 'name' => 'مستخدم تجريبي',
                 'email' => 'test@alabasi.es',
-                'password' => Hash::make('test123'),
-                'role' => 'user',
+                'password' => Hash::make('password'),
             ],
         ];
 
@@ -110,9 +107,9 @@ class AdminDevelopmentSeeder extends Seeder
         $this->command->info('🎉 تم إكمال بيانات الوحدة المركزية بنجاح!');
         $this->command->info('');
         $this->command->info('📋 بيانات الدخول للاختبار:');
-        $this->command->info('   المدير: admin@alabasi.es / admin123');
-        $this->command->info('   المطور: developer@alabasi.es / dev123');
-        $this->command->info('   المستخدم: test@alabasi.es / test123');
+        $this->command->info('   المدير: admin@alabasi.es / password');
+        $this->command->info('   المطور: developer@alabasi.es / password');
+        $this->command->info('   المستخدم: test@alabasi.es / password');
     }
 
     /**
