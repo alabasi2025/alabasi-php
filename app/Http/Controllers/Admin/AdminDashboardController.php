@@ -33,15 +33,27 @@ class AdminDashboardController extends Controller
     private function getSystemStats(): array
     {
         return Cache::remember('admin_stats', 300, function () {
-            return [
-                'total_units' => Unit::count(),
-                'active_units' => Unit::where('is_active', true)->count(),
-                'total_companies' => Company::count(),
-                'total_users' => User::count(),
-                'database_size' => $this->getDatabaseSize(),
-                'cache_size' => $this->getCacheSize(),
-                'recent_activities' => $this->getRecentActivities(),
-            ];
+            try {
+                return [
+                    'total_units' => \DB::table('units')->count(),
+                    'active_units' => \DB::table('units')->where('is_active', true)->count(),
+                    'total_companies' => \DB::table('companies')->count(),
+                    'total_users' => \DB::table('users')->count(),
+                    'database_size' => $this->getDatabaseSize(),
+                    'cache_size' => $this->getCacheSize(),
+                    'recent_activities' => $this->getRecentActivities(),
+                ];
+            } catch (\Exception $e) {
+                return [
+                    'total_units' => 0,
+                    'active_units' => 0,
+                    'total_companies' => 0,
+                    'total_users' => 0,
+                    'database_size' => 0,
+                    'cache_size' => 0,
+                    'recent_activities' => [],
+                ];
+            }
         });
     }
 
