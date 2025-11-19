@@ -8,6 +8,37 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- Current Unit & Company Info -->
+    @if(isset($currentUnit))
+    <div class="alert alert-info mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px;">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h5 class="mb-2">
+                    <i class="fas fa-building ms-2"></i>
+                    <strong>الوحدة الحالية:</strong> {{ $currentUnit->name }}
+                </h5>
+                @if(isset($currentCompany))
+                <p class="mb-0">
+                    <i class="fas fa-briefcase ms-2"></i>
+                    <strong>المؤسسة:</strong> {{ $currentCompany->name }}
+                </p>
+                @endif
+            </div>
+            <div class="text-end">
+                <span class="badge bg-light text-dark" style="font-size: 14px;">
+                    <i class="fas fa-code ms-1"></i> {{ $currentUnit->code }}
+                </span>
+                @if(isset($currentCompany))
+                <br>
+                <span class="badge bg-light text-dark mt-2" style="font-size: 14px;">
+                    <i class="fas fa-hashtag ms-1"></i> {{ $currentCompany->code }}
+                </span>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
+    
     <!-- Statistics Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">

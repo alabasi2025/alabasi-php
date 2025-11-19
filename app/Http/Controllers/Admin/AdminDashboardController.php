@@ -20,11 +20,19 @@ class AdminDashboardController extends Controller
     /**
      * عرض لوحة التحكم الرئيسية
      */
-    public function index()
+    public function index(Request $request)
     {
+        // الحصول على معلومات الوحدة والمؤسسة من الجلسة
+        $unitId = session('unit_id');
+        $companyId = session('company_id');
+        
+        // تحميل معلومات الوحدة والمؤسسة
+        $currentUnit = $unitId ? \App\Models\Main\Unit::find($unitId) : null;
+        $currentCompany = $companyId ? \App\Models\Main\Company::find($companyId) : null;
+        
         $stats = $this->getSystemStats();
         
-        return view('admin.dashboard.index', compact('stats'));
+        return view('admin.dashboard.index', compact('stats', 'currentUnit', 'currentCompany'));
     }
 
     /**
