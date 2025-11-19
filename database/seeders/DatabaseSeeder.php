@@ -12,11 +12,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $this->command->info('🚀 بدء تعبئة قاعدة البيانات...');
+        $this->command->info('');
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // تشغيل Seeder الوحدة المركزية (للاختبار والتطوير فقط)
+        if (app()->environment(['local', 'development'])) {
+            $this->command->info('🔧 بيئة التطوير: تشغيل بيانات الاختبار...');
+            $this->call(AdminDevelopmentSeeder::class);
+        } else {
+            $this->command->warn('⚠️  بيئة الإنتاج: تخطي بيانات الاختبار');
+        }
+
+        $this->command->info('');
+        $this->command->info('✅ تم إكمال تعبئة قاعدة البيانات بنجاح!');
     }
 }
