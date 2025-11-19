@@ -15,6 +15,7 @@ use App\Http\Controllers\AnalyticalAccountController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\ContextSelectorController;
 use App\Http\Controllers\ClearingTransactionController;
+use App\Http\Controllers\Auth\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,26 @@ use App\Http\Controllers\ClearingTransactionController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
+
+// عرض شاشة الدخول
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+
+// معالجة تسجيل الدخول
+Route::post('/login', [AuthController::class, 'login']);
+
+// تسجيل الخروج
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// إعادة توجيه الصفحة الرئيسية إلى شاشة الدخول
+Route::get('/', function () {
+    return redirect('/login');
+});
 
 // صفحة اختبار
 Route::get('/test-login', function() {
