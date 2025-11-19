@@ -423,7 +423,7 @@
     <script>
         // بيانات الرسوم البيانية
         const monthlyData = @json($monthly_stats);
-        const typeData = @json($type_stats);
+        const typeData = [];
         
         // رسم بياني للتحويلات حسب الشهر
         const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
