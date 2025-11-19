@@ -6,219 +6,354 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>تسجيل الدخول - نظام الأباسي المحاسبي</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Google Fonts - Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
-        
-        body {
+        * {
             font-family: 'Cairo', sans-serif;
         }
         
-        .gradient-bg {
+        body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            max-width: 500px;
+            width: 100%;
         }
         
         .login-card {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
         }
         
-        .input-icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .form-input {
-            padding-right: 40px;
-        }
-        
-        .step-indicator {
-            transition: all 0.3s ease;
-        }
-        
-        .step-active {
-            background: #667eea;
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
             color: white;
         }
         
-        .step-completed {
-            background: #10b981;
-            color: white;
+        .login-header i {
+            font-size: 60px;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
         }
         
-        .step-inactive {
-            background: #e5e7eb;
-            color: #9ca3af;
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .login-body {
+            padding: 40px 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-label i {
+            font-size: 16px;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .input-group-text {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 10px 0 0 10px;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .remember-me label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+        }
+        
+        .version-info {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .version-info i {
+            margin-left: 5px;
+        }
+        
+        .company-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .company-note i {
+            font-size: 14px;
+        }
+        
+        @media (max-width: 576px) {
+            .login-header h1 {
+                font-size: 24px;
+            }
+            
+            .login-body {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
-    
-    <div class="login-card rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <div class="inline-block p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
-                <i class="fas fa-user-shield text-white text-4xl"></i>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <i class="fas fa-user-shield"></i>
+                <h1>نظام الأباسي المحاسبي</h1>
+                <p>تسجيل الدخول إلى لوحة التحكم</p>
             </div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">نظام الأباسي المحاسبي</h1>
-            <p class="text-gray-600">تسجيل الدخول إلى لوحة التحكم</p>
-        </div>
-
-        <!-- Step Indicators -->
-        <div class="flex justify-between mb-8">
-            <div class="flex items-center gap-2">
-                <div id="step1-indicator" class="step-indicator step-active w-10 h-10 rounded-full flex items-center justify-center font-bold">1</div>
-                <span id="step1-text" class="text-sm font-semibold text-gray-700">الوحدة</span>
-            </div>
-            <div class="flex-1 h-1 bg-gray-300 mx-2 mt-5"></div>
-            <div class="flex items-center gap-2">
-                <div id="step2-indicator" class="step-indicator step-inactive w-10 h-10 rounded-full flex items-center justify-center font-bold">2</div>
-                <span id="step2-text" class="text-sm text-gray-400">المؤسسة</span>
-            </div>
-            <div class="flex-1 h-1 bg-gray-300 mx-2 mt-5"></div>
-            <div class="flex items-center gap-2">
-                <div id="step3-indicator" class="step-indicator step-inactive w-10 h-10 rounded-full flex items-center justify-center font-bold">3</div>
-                <span id="step3-text" class="text-sm text-gray-400">الدخول</span>
-            </div>
-        </div>
-
-        <!-- Error Messages -->
-        @if(session('error'))
-            <div class="bg-red-100 border-r-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle ml-2"></i>
-                    <p>{{ session('error') }}</p>
-                </div>
-            </div>
-        @endif
-
-        <!-- Login Form -->
-        <form method="POST" action="{{ route('login') }}" id="loginForm">
-            @csrf
-
-            <!-- Step 1: Select Unit -->
-            <div id="step1" class="step-content">
-                <div class="mb-6">
-                    <label for="unit_id" class="block text-gray-700 font-semibold mb-2">
-                        <i class="fas fa-building ml-2 text-blue-600"></i>
-                        اختر الوحدة
-                    </label>
-                    <select name="unit_id" id="unit_id" required
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
-                        <option value="">-- اختر الوحدة --</option>
-                        @foreach($units as $unit)
-                            <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+            
+            <!-- Body -->
+            <div class="login-body">
+                <!-- Errors -->
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle ms-2"></i>
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}
                         @endforeach
-                    </select>
-                </div>
-                <button type="button" onclick="goToStep2()" 
-                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg">
-                    <i class="fas fa-arrow-left ml-2"></i>
-                    التالي
-                </button>
-            </div>
-
-            <!-- Step 2: Select Company -->
-            <div id="step2" class="step-content hidden">
-                <div class="mb-6">
-                    <label for="company_id" class="block text-gray-700 font-semibold mb-2">
-                        <i class="fas fa-briefcase ml-2 text-green-600"></i>
-                        اختر المؤسسة
-                    </label>
-                    <select name="company_id" id="company_id"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
-                        <option value="">-- اختر المؤسسة --</option>
-                    </select>
-                    <p class="text-sm text-gray-500 mt-2" id="company_note">
-                        <i class="fas fa-info-circle ml-1"></i>
-                        اختر الوحدة أولاً لعرض المؤسسات التابعة لها
-                    </p>
-                </div>
-                <div class="flex gap-4">
-                    <button type="button" onclick="goToStep1()" 
-                            class="flex-1 bg-gray-300 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-400 transition-all duration-300">
-                        <i class="fas fa-arrow-right ml-2"></i>
-                        السابق
-                    </button>
-                    <button type="button" onclick="goToStep3()" 
-                            class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg">
-                        <i class="fas fa-arrow-left ml-2"></i>
-                        التالي
-                    </button>
-                </div>
-            </div>
-
-            <!-- Step 3: Login Credentials -->
-            <div id="step3" class="step-content hidden">
-                <!-- Email -->
-                <div class="mb-6 relative">
-                    <label for="email" class="block text-gray-700 font-semibold mb-2">
-                        <i class="fas fa-envelope ml-2 text-orange-600"></i>
-                        البريد الإلكتروني
-                    </label>
-                    <input type="email" name="email" id="email" required
-                           placeholder="example@alabasi.es"
-                           class="form-input w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
-                    <i class="fas fa-at input-icon"></i>
-                </div>
-
-                <!-- Password -->
-                <div class="mb-6 relative">
-                    <label for="password" class="block text-gray-700 font-semibold mb-2">
-                        <i class="fas fa-lock ml-2 text-red-600"></i>
-                        كلمة المرور
-                    </label>
-                    <input type="password" name="password" id="password" required
-                           placeholder="••••••••"
-                           class="form-input w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors">
-                    <i class="fas fa-key input-icon"></i>
-                </div>
-
-                <!-- Remember Me -->
-                <div class="mb-6 flex items-center">
-                    <input type="checkbox" name="remember" id="remember" class="ml-2 w-4 h-4 text-blue-600">
-                    <label for="remember" class="text-gray-700 cursor-pointer">تذكرني</label>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="flex gap-4">
-                    <button type="button" onclick="goToStep2()" 
-                            class="flex-1 bg-gray-300 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-400 transition-all duration-300">
-                        <i class="fas fa-arrow-right ml-2"></i>
-                        السابق
-                    </button>
-                    <button type="submit" 
-                            class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg">
-                        <i class="fas fa-sign-in-alt ml-2"></i>
+                    </div>
+                @endif
+                
+                <!-- Login Form -->
+                <form method="POST" action="{{ route('login') }}" id="loginForm">
+                    @csrf
+                    
+                    <!-- Unit Selection -->
+                    <div class="form-group">
+                        <label for="unit_id" class="form-label">
+                            <i class="fas fa-building text-primary"></i>
+                            الوحدة
+                        </label>
+                        <select 
+                            class="form-select @error('unit_id') is-invalid @enderror" 
+                            id="unit_id" 
+                            name="unit_id" 
+                            required
+                        >
+                            <option value="">-- اختر الوحدة --</option>
+                            @foreach($units as $unit)
+                                <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
+                                    {{ $unit->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <!-- Company Selection -->
+                    <div class="form-group">
+                        <label for="company_id" class="form-label">
+                            <i class="fas fa-briefcase text-success"></i>
+                            المؤسسة
+                        </label>
+                        <select 
+                            class="form-select @error('company_id') is-invalid @enderror" 
+                            id="company_id" 
+                            name="company_id"
+                        >
+                            <option value="">-- اختر المؤسسة --</option>
+                        </select>
+                        <div class="company-note" id="company_note">
+                            <i class="fas fa-info-circle text-muted"></i>
+                            <span>اختر الوحدة أولاً لعرض المؤسسات التابعة لها</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope text-warning"></i>
+                            البريد الإلكتروني
+                        </label>
+                        <div class="input-group">
+                            <input 
+                                type="email" 
+                                class="form-control @error('email') is-invalid @enderror" 
+                                id="email" 
+                                name="email" 
+                                value="{{ old('email') }}" 
+                                placeholder="example@alabasi.es"
+                                required 
+                                autofocus
+                            >
+                            <span class="input-group-text">
+                                <i class="fas fa-at"></i>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock text-danger"></i>
+                            كلمة المرور
+                        </label>
+                        <div class="input-group">
+                            <input 
+                                type="password" 
+                                class="form-control @error('password') is-invalid @enderror" 
+                                id="password" 
+                                name="password" 
+                                placeholder="••••••••"
+                                required
+                            >
+                            <span class="input-group-text">
+                                <i class="fas fa-key"></i>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Remember Me -->
+                    <div class="form-group">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">تذكرني</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-login">
+                        <i class="fas fa-sign-in-alt ms-2"></i>
                         تسجيل الدخول
                     </button>
-                </div>
+                </form>
             </div>
-
-        </form>
-
-        <!-- Footer -->
-        <div class="mt-8 text-center text-sm text-gray-600">
-            <i class="fab fa-laravel text-red-500"></i> Laravel 12.39.0 | 
-            نظام الأباسي المحاسبي v2.0
+        </div>
+        
+        <!-- Version Info -->
+        <div class="version-info">
+            <i class="fab fa-laravel"></i>
+            Laravel 12.39.0 | نظام الأباسي المحاسبي v2.0
         </div>
     </div>
-
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        let currentStep = 1;
-        const units = @json($units);
-        const companies = @json($companies ?? []);
-
-        // Load companies when unit is selected
+        // All companies data
+        const allCompanies = @json($companies ?? []);
+        
+        // Unit selection change handler
         document.getElementById('unit_id').addEventListener('change', function() {
             const unitId = this.value;
             const companySelect = document.getElementById('company_id');
@@ -228,80 +363,46 @@
             companySelect.innerHTML = '<option value="">-- اختر المؤسسة --</option>';
             
             if (unitId) {
-                // Filter companies by unit
-                const unitCompanies = companies.filter(c => c.unit_id == unitId);
+                // Filter companies by selected unit
+                const unitCompanies = allCompanies.filter(company => company.unit_id == unitId);
                 
                 if (unitCompanies.length > 0) {
+                    // Add companies to select
                     unitCompanies.forEach(company => {
                         const option = document.createElement('option');
                         option.value = company.id;
                         option.textContent = company.name;
                         companySelect.appendChild(option);
                     });
-                    companyNote.innerHTML = '<i class="fas fa-check-circle ml-1 text-green-600"></i> تم تحميل ' + unitCompanies.length + ' مؤسسة';
+                    
+                    // Update note
+                    companyNote.innerHTML = `
+                        <i class="fas fa-check-circle text-success"></i>
+                        <span>تم تحميل ${unitCompanies.length} مؤسسة</span>
+                    `;
                 } else {
-                    companyNote.innerHTML = '<i class="fas fa-info-circle ml-1 text-orange-600"></i> لا توجد مؤسسات في هذه الوحدة';
+                    // No companies found
+                    companyNote.innerHTML = `
+                        <i class="fas fa-info-circle text-warning"></i>
+                        <span>لا توجد مؤسسات في هذه الوحدة</span>
+                    `;
                 }
             } else {
-                companyNote.innerHTML = '<i class="fas fa-info-circle ml-1"></i> اختر الوحدة أولاً لعرض المؤسسات التابعة لها';
+                // No unit selected
+                companyNote.innerHTML = `
+                    <i class="fas fa-info-circle text-muted"></i>
+                    <span>اختر الوحدة أولاً لعرض المؤسسات التابعة لها</span>
+                `;
             }
         });
-
-        function goToStep1() {
-            showStep(1);
-        }
-
-        function goToStep2() {
-            const unitId = document.getElementById('unit_id').value;
-            if (!unitId) {
-                alert('الرجاء اختيار الوحدة أولاً');
-                return;
+        
+        // Trigger change event on page load if unit is already selected
+        window.addEventListener('load', function() {
+            const unitSelect = document.getElementById('unit_id');
+            if (unitSelect.value) {
+                unitSelect.dispatchEvent(new Event('change'));
             }
-            showStep(2);
-        }
-
-        function goToStep3() {
-            const companyId = document.getElementById('company_id').value;
-            const companySelect = document.getElementById('company_id');
-            
-            // Check if company selection is required
-            if (companySelect.options.length > 1 && !companyId) {
-                alert('الرجاء اختيار المؤسسة');
-                return;
-            }
-            showStep(3);
-        }
-
-        function showStep(step) {
-            // Hide all steps
-            document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
-            
-            // Show current step
-            document.getElementById('step' + step).classList.remove('hidden');
-            
-            // Update indicators
-            for (let i = 1; i <= 3; i++) {
-                const indicator = document.getElementById('step' + i + '-indicator');
-                const text = document.getElementById('step' + i + '-text');
-                
-                if (i < step) {
-                    indicator.className = 'step-indicator step-completed w-10 h-10 rounded-full flex items-center justify-center font-bold';
-                    indicator.innerHTML = '<i class="fas fa-check"></i>';
-                    text.className = 'text-sm font-semibold text-green-600';
-                } else if (i === step) {
-                    indicator.className = 'step-indicator step-active w-10 h-10 rounded-full flex items-center justify-center font-bold';
-                    indicator.textContent = i;
-                    text.className = 'text-sm font-semibold text-gray-700';
-                } else {
-                    indicator.className = 'step-indicator step-inactive w-10 h-10 rounded-full flex items-center justify-center font-bold';
-                    indicator.textContent = i;
-                    text.className = 'text-sm text-gray-400';
-                }
-            }
-            
-            currentStep = step;
-        }
+        });
     </script>
-
 </body>
 </html>
