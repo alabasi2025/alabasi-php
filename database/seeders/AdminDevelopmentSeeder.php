@@ -23,10 +23,10 @@ class AdminDevelopmentSeeder extends Seeder
             ['code' => 'ADMIN'],
             [
                 'name' => 'الوحدة المركزية',
-                'name_en' => 'Admin Unit',
                 'description' => 'وحدة الاختبار والتطوير - تحتوي على بيانات افتراضية',
+                'database_name' => 'main',
                 'is_active' => true,
-                'is_development' => true, // علامة للتطوير
+                'is_development' => true,
             ]
         );
 
@@ -37,7 +37,6 @@ class AdminDevelopmentSeeder extends Seeder
             [
                 'code' => 'TEST001',
                 'name' => 'شركة الاختبار الأولى',
-                'name_en' => 'Test Company 1',
                 'tax_number' => '1234567890',
                 'phone' => '0500000001',
                 'email' => 'test1@alabasi.es',
@@ -45,7 +44,6 @@ class AdminDevelopmentSeeder extends Seeder
             [
                 'code' => 'TEST002',
                 'name' => 'شركة الاختبار الثانية',
-                'name_en' => 'Test Company 2',
                 'tax_number' => '0987654321',
                 'phone' => '0500000002',
                 'email' => 'test2@alabasi.es',
@@ -53,7 +51,6 @@ class AdminDevelopmentSeeder extends Seeder
             [
                 'code' => 'DEMO001',
                 'name' => 'شركة العرض التوضيحي',
-                'name_en' => 'Demo Company',
                 'tax_number' => '5555555555',
                 'phone' => '0500000003',
                 'email' => 'demo@alabasi.es',
