@@ -57,7 +57,7 @@ class AuthController extends Controller
             // مسح محاولات الدخول الفاشلة
             RateLimiter::clear($this->throttleKey($request));
 
-            return redirect()->intended('/admin/dashboard');
+            return redirect()->intended('/');
         }
 
         // زيادة عداد المحاولات الفاشلة
