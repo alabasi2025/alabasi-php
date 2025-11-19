@@ -286,10 +286,13 @@
     <div class="header">
         <h1>
             <span>🏢</span>
-            <span>القاعدة المركزية - نظام Alabasi</span>
+            <span>{{ isset($currentUnit) ? $currentUnit->name : 'نظام Alabasi' }}</span>
         </h1>
         <div class="actions">
-            <span class="user-info">📍 {{ session('unit_name') }}</span>
+            @if(isset($currentCompany))
+            <span class="user-info">🏪 {{ $currentCompany->name }}</span>
+            @endif
+            <span class="user-info">📍 {{ session('unit_name') ?? (isset($currentUnit) ? $currentUnit->name : 'غير محدد') }}</span>
             <a href="/clearing-transactions/create">➕ تحويل جديد</a>
             <a href="/clearing-transactions/report">📊 تقرير الحسابات الوسيطة</a>
             <a href="/logout">🚪 خروج</a>

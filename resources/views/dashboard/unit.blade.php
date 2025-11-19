@@ -85,17 +85,24 @@
 </head>
 <body>
     <div class="header">
-        <h1>🏢 نظام Alabasi المحاسبي</h1>
+        <h1>🏢 {{ isset($currentUnit) ? $currentUnit->name : 'نظام Alabasi المحاسبي' }}</h1>
         <div class="user-info">
-            <span>📍 {{ session('unit_name') }}</span>
-            <span>🏪 {{ session('company_name') }}</span>
+            @if(isset($currentUnit))
+            <span>📍 {{ $currentUnit->name }}</span>
+            @endif
+            @if(isset($currentCompany))
+            <span>🏪 {{ $currentCompany->name }}</span>
+            @endif
             <a href="/logout">🚪 خروج</a>
         </div>
     </div>
     
     <div class="container">
         <div class="welcome">
-            <h2>مرحباً بك في {{ session('unit_name') }}</h2>
+            <h2>مرحباً بك في {{ isset($currentUnit) ? $currentUnit->name : 'نظام Alabasi' }}</h2>
+            @if(isset($currentCompany))
+            <p>المؤسسة: <strong>{{ $currentCompany->name }}</strong> (الكود: {{ $currentCompany->code }})</p>
+            @endif
             <p>هذه الواجهة قيد التطوير. سيتم إضافة المزيد من الميزات قريباً.</p>
         </div>
     </div>

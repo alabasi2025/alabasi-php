@@ -12,16 +12,24 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // الحصول على معلومات الوحدة والمؤسسة من الجلسة
+        $unitId = session('unit_id');
+        $companyId = session('company_id');
+        
+        // تحميل معلومات الوحدة والمؤسسة
+        $currentUnit = $unitId ? Unit::find($unitId) : null;
+        $currentCompany = $companyId ? Company::find($companyId) : null;
+        
         $is_main = session('is_main', false);
         
         if ($is_main) {
-            return $this->mainDashboard();
+            return $this->mainDashboard($currentUnit, $currentCompany);
         } else {
-            return $this->unitDashboard();
+            return $this->unitDashboard($currentUnit, $currentCompany);
         }
     }
     
-    private function mainDashboard()
+    private function mainDashboard($currentUnit = null, $currentCompany = null)
     {
         try {
             // إحصائيات عامة
@@ -83,7 +91,9 @@ class DashboardController extends Controller
                 'recent_transfers',
                 'units_stats',
                 'monthly_stats',
-                'type_stats'
+                'type_stats',
+                'currentUnit',
+                'currentCompany'
             ));
         } catch (\Exception $e) {
             // في حالة وجود خطأ، عرض واجهة بسيطة
@@ -93,9 +103,9 @@ class DashboardController extends Controller
         }
     }
     
-    private function unitDashboard()
+    private function unitDashboard($currentUnit = null, $currentCompany = null)
     {
         // واجهة وحدة العمل
-        return view('dashboard.unit');
+        return view('dashboard.unit', compact('currentUnit', 'currentCompany'));
     }
 }
